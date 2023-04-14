@@ -1,115 +1,226 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'
+    hide PhoneAuthProvider, EmailAuthProvider;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:sorsfuse/components/auth_builder.dart';
+import 'package:sorsfuse/config/firebase_config.dart';
+import 'package:sorsfuse/screens/auth/forget_password.dart';
+import 'package:sorsfuse/screens/auth/phone.dart';
+import 'package:sorsfuse/screens/auth/verify_email.dart';
+import 'package:sorsfuse/screens/dashboard.dart';
+import 'package:sorsfuse/screens/splash.dart';
+import 'package:sorsfuse/screens/update_profile.dart';
+import 'package:sorsfuse/theme/theme.dart';
+import 'config/firebase_remote_config.dart';
+import 'package:sorsfuse/global/session.dart' as SESSION;
+import 'package:sorsfuse/global/global.dart' as GLOBAL;
 
-void main() {
-  runApp(const MyApp());
+final emailLinkProviderConfig=EmailLinkAuthProvider(
+  actionCodeSettings: GLOBAL.actionCodeSettings,
+);
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
+  FirebaseUIAuth.configureProviders([
+    EmailAuthProvider(),
+    //PhoneAuthProvider(),
+    //GoogleProvider(clientId: ),
+  ]);
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(MaterialApp(
+    title: "SorsFuse",
+     theme: lightTheme,
+    // darkTheme: darkTheme,
+    home: FutureBuilder<FirebaseRemoteConfig>(
+      future: setupRemoteConfig(),
+      builder: (BuildContext context,
+          AsyncSnapshot<FirebaseRemoteConfig> snapshot) {
+        return snapshot.hasData
+            ? AuthGate(remoteConfig: snapshot.requireData)
+            : Splash();
+      },
+    ),
+    debugShowCheckedModeBanner: false,
+    locale: const Locale('en', 'US'),
+    supportedLocales: const [Locale('en', 'US'),Locale('en', 'IN'),Locale('en', 'GB')],
+    localizationsDelegates: [
+       FirebaseUILocalizations.withDefaultOverrides(const LabelOverrides()),
+       GlobalMaterialLocalizations.delegate,
+       GlobalWidgetsLocalizations.delegate,
+       GlobalCupertinoLocalizations.delegate,
+       FirebaseUILocalizations.delegate,
+    ],
+  )));
 }
+class LabelOverrides extends DefaultLocalizations{
+  const LabelOverrides();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  @override
+  String get emailInputLabel=>'Enter your email';
 
-  // This widget is the root of your application.
+}
+class AuthGate extends StatelessWidget {
+  AuthGate({
+    required this.remoteConfig,
+  });
+
+  final FirebaseRemoteConfig remoteConfig;
+  Map<String, dynamic> userData = {};
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    final mfaAction = AuthStateChangeAction<MFARequired>(
+          (context, state) async {
+        await startMFAVerification(
+          context: context,
+          resolver: state.resolver,
+        );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Dashboard()));
+      },
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        // if user is already signed-in use it as initial data
+
+        initialData: FirebaseAuth.instance.currentUser,
+        builder: (context, snapshot) {
+          // waiting for data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Splash();
+          } else {
+            // user not signed in
+            if (snapshot.data == null) {
+              return SignInScreen(
+                actions: [
+                  ForgotPasswordAction((context, email) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ForgetPassword(email: email)));
+                  }),
+                  VerifyPhoneAction((context, _) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => PhoneLogin()));
+                  }),
+                  AuthStateChangeAction<SignedIn>((context, state) async {
+                    //set session
+                    print("login done");
+
+                    if (!state.user!.emailVerified) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VerifyEmail()));
+                    } else {
+                      await setSession(state.user!.uid);
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Dashboard()));
+                    }
+                  }),
+                  AuthStateChangeAction<UserCreated>((context, state) {
+                    FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(state.credential.user!.uid)
+                        .set({
+                      "uid": state.credential.user!.uid,
+                    });
+                    if (!state.credential.user!.emailVerified) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VerifyEmail()));
+                    } else {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => (FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser?.displayName==null)?UpdateProfile():Dashboard()));
+                    }
+                  }),
+                  mfaAction,
+                ],
+                styles: const {
+                  EmailFormStyle(signInButtonVariant: ButtonVariant.filled),
+                },
+                headerBuilder: headerBuilder(),
+                sideBuilder: sideBuilder(),
+                subtitleBuilder: (context, action) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      action == AuthAction.signIn
+                          ? 'Welcome to SorsFuse! Please sign in to continue.'
+                          : 'Welcome to SorsFuse! please create a account to continue',
+                    ),
+                  );
+                },
+                footerBuilder: (context, action) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text(
+                        action == AuthAction.signIn
+                            ? 'Welcome to SorsFuse! please sign in to continue.'
+                            : 'Welcome to SorsFuse ! please create an account to continue',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else {
+              //Render Your applicatiom if authenticated
+              //and local session
+              return FutureBuilder<bool>(
+                future: setSession(
+                    FirebaseAuth.instance.currentUser!.uid), // async work
+                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return Splash();
+                    default:
+                      if (snapshot.hasError) {
+                        print("ERROR");
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if(FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser!.displayName==null){
+                        return UpdateProfile();
+                      } else {
+                        return Dashboard();
+                      }
+                  }
+                },
+              );
+            }
+          }
+        },
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future<bool> setSession(String uid) async {
+    //print(uid);
+    var result =
+    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    userData = result.data() as Map<String, dynamic>;
+    //print("set user data");
+    // print(userData["subscription_started"]);
+    SESSION.uid = uid;
+    SESSION.email = userData.containsKey("email")
+        ? userData['email']
+        : FirebaseAuth.instance.currentUser!.email;
+    SESSION.firstName = userData["firstName"] ?? "";
+    SESSION.lastName = userData["lastName"] ?? "";
+    SESSION.phoneNumber = userData["phoneNumber"] ?? "";
+
+    return true;
   }
 }
