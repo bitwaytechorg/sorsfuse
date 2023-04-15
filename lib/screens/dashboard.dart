@@ -3,6 +3,7 @@ import 'package:countries_world_map/data/maps/world_map.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/app_bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
+import 'package:sorsfuse/global/global.dart' as GLOBAL;
 
 class Dashboard extends StatefulWidget{
   @override
@@ -10,13 +11,13 @@ class Dashboard extends StatefulWidget{
 }
 
 class DashboardState extends State<Dashboard>{
-  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldkey,
-      appBar: BWTAppBar(appBarTitle: "Dashboard", scaffoldKey: _scaffoldkey,),
+      key: scaffoldkey,
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
       endDrawer: BWTDrawer(),
       body: Center(
         child: Container(

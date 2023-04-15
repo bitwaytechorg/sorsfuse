@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/app_bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
+import 'package:sorsfuse/global/global.dart' as GLOBAL;
 
 class Audience extends StatefulWidget{
 
@@ -11,13 +12,12 @@ class Audience extends StatefulWidget{
 }
 
 class AudienceState extends State<Audience>{
-  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
-
+  final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldkey,
-      appBar: BWTAppBar(appBarTitle: "Update Profile", scaffoldKey: _scaffoldkey,),
+      key: scaffoldkey,
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
       endDrawer: BWTDrawer(),
     );
   }

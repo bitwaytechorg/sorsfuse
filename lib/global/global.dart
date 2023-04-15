@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 Map<String, dynamic> lang ={};
+String APP_TITLE="";
 
 final actionCodeSettings = ActionCodeSettings(
   url: 'https://mrs-jacked.firebaseapp.com',

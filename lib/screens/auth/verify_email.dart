@@ -11,7 +11,7 @@ class VerifyEmail extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmailVerificationScreen(
       headerBuilder: headerBuilder(),
-      sideBuilder: sideBuilder(),
+      //sideBuilder: sideBuilder(),
       // actionCodeSettings: GLOBAL.actionCodeSettings,
       actions: [
         EmailVerifiedAction(() {

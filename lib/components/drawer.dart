@@ -51,7 +51,8 @@ class BWTDrawer extends Drawer{
                         )),
                     //container with name
                     Container(
-                      child: Text(FirebaseAuth.instance.currentUser?.displayName??"Hello!"),
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(SESSION.displayName, style: TextStyle(fontSize: 16),),
                     ),
                     InkWell(
                       onTap: ()=>Navigator.push(context, scaleIn(UpdateProfile())),
@@ -101,7 +102,7 @@ class BWTDrawer extends Drawer{
                               child: ListTile(
                                 leading: Icon(FontAwesomeIcons.facebook),
                                 title: Text("Facebook Connect", style: TextStyle(color: Colors.black87, fontSize: 14)),
-                                subtitle: Text("Your subscription & other plans"),
+                                subtitle: Text("Manage Facebook Ad Profiles"),
                               ),
                             ),
 
@@ -123,6 +124,26 @@ class BWTDrawer extends Drawer{
                               child: ListTile(
                                 leading: Icon(FontAwesomeIcons.piggyBank),
                                 title: Text("Payment History", style: TextStyle(color: Colors.black87, fontSize: 14)),
+                                subtitle: Text("see all your invoices"),
+                              ),
+                            ),
+                            Divider(
+                              thickness: 1,
+                              color: CONFIG.secondaryColor,
+                            ),
+                            InkWell(
+                              onTap: ()=>Navigator.push(context,scaleIn(PaymentHistory())),
+                              child: ListTile(
+                                leading: Icon(FontAwesomeIcons.piggyBank),
+                                title: Text("Settings", style: TextStyle(color: Colors.black87, fontSize: 14)),
+                                subtitle: Text("see all your invoices"),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: ()=>Navigator.push(context,scaleIn(PaymentHistory())),
+                              child: ListTile(
+                                leading: Icon(FontAwesomeIcons.piggyBank),
+                                title: Text("Support", style: TextStyle(color: Colors.black87, fontSize: 14)),
                                 subtitle: Text("see all your invoices"),
                               ),
                             ),

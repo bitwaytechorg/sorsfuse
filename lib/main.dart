@@ -130,11 +130,14 @@ class AuthGate extends StatelessWidget {
                     }
                   }),
                   AuthStateChangeAction<UserCreated>((context, state) {
+                    String email = state.credential.user!.email.toString();
                     FirebaseFirestore.instance
                         .collection("users")
                         .doc(state.credential.user!.uid)
                         .set({
                       "uid": state.credential.user!.uid,
+                      "email":state.credential.user!.email,
+                      "displayName":email.substring(0,email.indexOf("@"))
                     });
                     if (!state.credential.user!.emailVerified) {
                       Navigator.pushReplacement(
@@ -219,6 +222,7 @@ class AuthGate extends StatelessWidget {
         : FirebaseAuth.instance.currentUser!.email;
     SESSION.firstName = userData["firstName"] ?? "";
     SESSION.lastName = userData["lastName"] ?? "";
+    SESSION.displayName = userData["displayName"] ?? "";
     SESSION.phoneNumber = userData["phoneNumber"] ?? "";
 
     return true;

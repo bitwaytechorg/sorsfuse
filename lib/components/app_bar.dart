@@ -2,13 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/avatar.dart';
 import 'package:sorsfuse/config/config.dart' as CONFIG;
+import 'package:sorsfuse/global/global.dart' as GLOBAL;
 import 'package:sorsfuse/global/session.dart' as SESSION;
 
 class BWTAppBar extends AppBar{
-  final String appBarTitle;
   final GlobalKey<ScaffoldState> scaffoldKey;
-  BWTAppBar({required this.appBarTitle, required this.scaffoldKey}):super(
-    title: Text(appBarTitle),
+  BWTAppBar({required this.scaffoldKey}):super(
+    title: Text(GLOBAL.APP_TITLE),
     leading: AspectRatio(aspectRatio: 1, child:Image.asset("assets/images/logo_low_white.png", height: 50,)),
     centerTitle: false,
     foregroundColor: Colors.white,

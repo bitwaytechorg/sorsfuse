@@ -91,11 +91,11 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
 
 ThemeData lightTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: Colors.white,
-    primaryColor: Color(0xFF1990D0),
-    accentColor: Color(0xFF29a3ff),
+    primaryColor: CONFIG.primaryColor,
+    accentColor: CONFIG.secondaryColor,
     canvasColor: Color(0xFFFFFFFF),
-    primaryColorLight: Color(0xFFe3defe),
-    primaryColorDark: Color(0xFF1990D0),
+    primaryColorLight: CONFIG.secondaryColor,
+    primaryColorDark: CONFIG.primaryColor,
     textTheme: TextTheme(
       titleSmall: TextStyle(
           color: Color(0xFF383B45),
@@ -159,8 +159,8 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       background: Color(0xFFFFFFFF),
       primary: CONFIG.primaryColor,
       primaryVariant: Color(0xFF71B5D9),
-      secondary: Color(0xFF0485d6),
-      secondaryVariant: Color(0xFF0485d6),
+      secondary: CONFIG.secondaryColor,
+      secondaryVariant: CONFIG.secondaryColor,
       error: Colors.red,
       surface: Color(0xFFFFFFFF),
       brightness: Brightness.light,

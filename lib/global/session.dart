@@ -1,1 +1,1 @@
-String uid="", email="",firstName="",lastName="",phoneNumber="", profileImage="";
+String uid="", email="",firstName="",lastName="",displayName="",phoneNumber="", profileImage="";
