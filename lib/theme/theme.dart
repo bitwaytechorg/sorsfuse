@@ -96,6 +96,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     canvasColor: Color(0xFFFFFFFF),
     primaryColorLight: CONFIG.secondaryColor,
     primaryColorDark: CONFIG.primaryColor,
+    splashColor: Colors.transparent,
     textTheme: TextTheme(
       titleSmall: TextStyle(
           color: Color(0xFF383B45),
@@ -116,38 +117,39 @@ ThemeData lightTheme = ThemeData.light().copyWith(
       displayLarge: TextStyle(color: Color(0xFF383B45),fontFamily:"Futura",),
       labelMedium: TextStyle(color: Color(0xFF383B45), fontSize: 18,fontFamily:"Futura",),
     ),
-   // buttonTheme: ButtonThemeData(shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(18.0),)),
-    outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(padding: EdgeInsets.all(13),textStyle: TextStyle(color: Colors.white, fontSize: 18), backgroundColor: CONFIG.primaryColor, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
-    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),textStyle: TextStyle(color: Colors.white, fontSize: 20), backgroundColor: CONFIG.primaryColor, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
+    buttonTheme: ButtonThemeData(buttonColor: Colors.transparent, shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),)),
+    outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(padding: EdgeInsets.all(13),textStyle: TextStyle(color: Colors.white, fontSize: 16), backgroundColor: CONFIG.primaryColor, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
+    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(shadowColor: Colors.transparent, surfaceTintColor: Colors.transparent,padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),textStyle: TextStyle(color: Colors.white, fontSize: 16), backgroundColor: CONFIG.primaryColor, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Color(0xFFEFF3F7),
+     // fillColor: Color(0xFFEFF3F7),
+      fillColor: Colors.white,
       filled:true,
       border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
           borderSide: BorderSide(
             //color: Color(0xFFe4e8ed),
-              color:Colors.transparent
+              color:Colors.grey[300]!
           )
       ),
       enabledBorder:  OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
           borderSide: BorderSide(
             //color: Color(0xFFe4e8ed),
-              color:Colors.transparent
+              color:Colors.grey[300]!
           )
       ),
       focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
           borderSide: BorderSide(
             // color: Color(0xFFe4e8ed),
-              color:Colors.transparent
+              color:Colors.grey[300]!
           )
       ),
       helperStyle:
       TextStyle(color: Colors.black87, fontWeight: FontWeight.w300),
       hintStyle: TextStyle(color: Colors.black54, fontWeight: FontWeight.w300),
       labelStyle: TextStyle(color: Colors.grey),
-      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
     ),
     bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: Colors.transparent,

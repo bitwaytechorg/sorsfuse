@@ -3,7 +3,6 @@ import 'package:countries_world_map/data/maps/world_map.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/app_bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
-import 'package:sorsfuse/global/global.dart' as GLOBAL;
 
 class Dashboard extends StatefulWidget{
   @override

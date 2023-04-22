@@ -26,13 +26,13 @@ class AvatarState extends State<Avatar> {
         decoration: BoxDecoration(
           color:Colors.white,
           border:Border.all(
-            color:Color(0x55FFFFFF),
+            color:CONFIG.secondaryColor,
             width: widget.size/20,
           ),
           borderRadius: BorderRadius.circular(widget.size/2),
           //boxShadow: [BoxShadow(color:Colors.white,blurRadius: 2,spreadRadius: 4)]
         ),
-        child: ClipOval(child:widget.ImageURL!=''?Image.network(widget.ImageURL, fit: BoxFit.cover,):widget.isFile?Image.file(io.File(widget.ImageFile!.path,),fit: BoxFit.cover,):SvgPicture.asset("assets/svg/default_avatar.svg", color: CONFIG.primaryColor, width: widget.size,height: widget.size,),)
+        child: ClipOval(child:widget.ImageURL!=''?Image.network(widget.ImageURL, fit: BoxFit.cover,):widget.isFile?Image.file(io.File(widget.ImageFile!.path,),fit: BoxFit.cover,):SvgPicture.asset("assets/svg/default_avatar.svg", color: CONFIG.secondaryColor, width: widget.size,height: widget.size,),)
     );
   }
 }

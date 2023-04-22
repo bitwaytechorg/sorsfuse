@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/app_bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
-import 'package:sorsfuse/global/global.dart' as GLOBAL;
 
 class Audience extends StatefulWidget{
 

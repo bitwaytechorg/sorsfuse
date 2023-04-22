@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     hide PhoneAuthProvider, EmailAuthProvider;
@@ -15,6 +17,7 @@ import 'package:sorsfuse/screens/auth/forget_password.dart';
 import 'package:sorsfuse/screens/auth/phone.dart';
 import 'package:sorsfuse/screens/auth/verify_email.dart';
 import 'package:sorsfuse/screens/dashboard.dart';
+import 'package:sorsfuse/screens/privacy-policy.dart';
 import 'package:sorsfuse/screens/splash.dart';
 import 'package:sorsfuse/screens/update_profile.dart';
 import 'package:sorsfuse/theme/theme.dart';
@@ -40,6 +43,9 @@ void main() async {
     title: "SorsFuse",
      theme: lightTheme,
     // darkTheme: darkTheme,
+    routes:  <String, WidgetBuilder>{
+      '/privacy-policy': (BuildContext context) => PrivacyPolicy(),
+    },
     home: FutureBuilder<FirebaseRemoteConfig>(
       future: setupRemoteConfig(),
       builder: (BuildContext context,
@@ -132,12 +138,14 @@ class AuthGate extends StatelessWidget {
                   AuthStateChangeAction<UserCreated>((context, state) {
                     String email = state.credential.user!.email.toString();
                     FirebaseFirestore.instance
-                        .collection("users")
+                        .collection(GLOBAL.userCollection)
                         .doc(state.credential.user!.uid)
                         .set({
                       "uid": state.credential.user!.uid,
                       "email":state.credential.user!.email,
-                      "displayName":email.substring(0,email.indexOf("@"))
+                      "displayName":email.substring(0,email.indexOf("@")),
+                      "subscription_ends_at":DateTime.now().toUtc(),
+                      "audience_limit":3
                     });
                     if (!state.credential.user!.emailVerified) {
                       Navigator.pushReplacement(
@@ -161,8 +169,8 @@ class AuthGate extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 8),
                     child: Text(
                       action == AuthAction.signIn
-                          ? 'Welcome to SorsFuse! Please sign in to continue.'
-                          : 'Welcome to SorsFuse! please create a account to continue',
+                          ? 'Welcome to ${GLOBAL.APP_TITLE}! Please sign in to continue.'
+                          : 'Welcome to ${GLOBAL.APP_TITLE}! please create a account to continue',
                     ),
                   );
                 },
@@ -172,8 +180,8 @@ class AuthGate extends StatelessWidget {
                       padding: EdgeInsets.only(top: 16),
                       child: Text(
                         action == AuthAction.signIn
-                            ? 'Welcome to SorsFuse! please sign in to continue.'
-                            : 'Welcome to SorsFuse ! please create an account to continue',
+                            ? 'Welcome to ${GLOBAL.APP_TITLE}! please sign in to continue.'
+                            : 'Welcome to ${GLOBAL.APP_TITLE} ! please create an account to continue',
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -212,7 +220,7 @@ class AuthGate extends StatelessWidget {
   Future<bool> setSession(String uid) async {
     //print(uid);
     var result =
-    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    await FirebaseFirestore.instance.collection(GLOBAL.userCollection).doc(uid).get();
     userData = result.data() as Map<String, dynamic>;
     //print("set user data");
     // print(userData["subscription_started"]);
@@ -224,6 +232,11 @@ class AuthGate extends StatelessWidget {
     SESSION.lastName = userData["lastName"] ?? "";
     SESSION.displayName = userData["displayName"] ?? "";
     SESSION.phoneNumber = userData["phoneNumber"] ?? "";
+    SESSION.audience_limit = userData["audience_limit"] ?? 3;
+    SESSION.source_limit = userData["source_limit"] ?? 5;
+    SESSION.subscription = userData['subscription']??"trail";
+    SESSION.subscription_ends_at = userData["subscription_ends_at"].toDate();
+    SESSION.ad_accounts = userData['ad_accounts']!=null && userData['ad_accounts']!=""?jsonDecode(userData['ad_accounts']):{};
 
     return true;
   }

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 Map<String, dynamic> lang ={};
 String APP_TITLE="";
 
+// Collections
+String userCollection="users";
+String audienceCollection="audience";
+
 final actionCodeSettings = ActionCodeSettings(
   url: 'https://mrs-jacked.firebaseapp.com',
   handleCodeInApp: true,

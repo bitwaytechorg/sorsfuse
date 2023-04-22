@@ -5,12 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sorsfuse/components/avatar.dart';
 import 'package:sorsfuse/components/route_builder.dart';
 import 'package:sorsfuse/screens/audience.dart';
+import 'package:sorsfuse/screens/audience_list.dart';
 import 'package:sorsfuse/screens/dashboard.dart';
 import 'package:sorsfuse/config/config.dart' as CONFIG;
 import 'package:sorsfuse/global/session.dart' as SESSION;
 import 'package:sorsfuse/screens/facebook_connect.dart';
-import 'package:sorsfuse/screens/payment_history.dart';
+import 'package:sorsfuse/screens/settings.dart';
 import 'package:sorsfuse/screens/subscription.dart';
+import 'package:sorsfuse/screens/support.dart';
 import 'package:sorsfuse/screens/update_profile.dart';
 
 class BWTDrawer extends Drawer{
@@ -39,7 +41,7 @@ class BWTDrawer extends Drawer{
                           alignment: Alignment.topCenter,
                           children: [
                             Container(
-                              color: CONFIG.primaryColor,
+                              color: CONFIG.secondaryColor,
                               width: double.maxFinite,
                               height: 70,
                             ),
@@ -57,7 +59,7 @@ class BWTDrawer extends Drawer{
                     InkWell(
                       onTap: ()=>Navigator.push(context, scaleIn(UpdateProfile())),
                       child: Container(
-                        child:Text("Update Profile", style: TextStyle(color:CONFIG.primaryColor, fontSize: 12),),
+                        child:Text("Profile", style: TextStyle(color:CONFIG.primaryColor, fontSize: 12),),
                       ),
                     ),
                     //menu
@@ -67,39 +69,37 @@ class BWTDrawer extends Drawer{
                     ),
                     Container(
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-                        //height:500,
-                        child: Column(
+                        height:MediaQuery.of(context).size.height-200,
+                        child: SingleChildScrollView(
+                            child:Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             InkWell(
                                 onTap: ()=>Navigator.push(context,scaleIn(Dashboard())),
                                 child: ListTile(
+                                  dense: true,
                                   leading: Icon(Icons.dashboard),
                                   title: Text("Dashboard", style: TextStyle(color: Colors.black87, fontSize: 14)),
                                   subtitle: Text("Summary & Stats"),
                                 )
-
                             ),
 
                             InkWell(
-                              onTap: ()=>Navigator.push(context, scaleIn(Audience())),
+                              onTap: ()=>Navigator.push(context, scaleIn(AudienceList())),
                               child: Container(
                                   child:ListTile(
+                                    dense: true,
                                     leading: Icon(FontAwesomeIcons.peopleGroup),
                                     title: Text("Audience", style: TextStyle(color: Colors.black87, fontSize: 14),),
                                     subtitle: Text("Manage & Share audience"),
                                   )
                               ),
                             ),
-
-                            Divider(
-                              thickness: 1,
-                              color: CONFIG.secondaryColor,
-                            ),
                             InkWell(
                               onTap: ()=>Navigator.push(context, scaleIn(FacebookConnect())),
                               child: ListTile(
+                                dense: true,
                                 leading: Icon(FontAwesomeIcons.facebook),
                                 title: Text("Facebook Connect", style: TextStyle(color: Colors.black87, fontSize: 14)),
                                 subtitle: Text("Manage Facebook Ad Profiles"),
@@ -114,42 +114,33 @@ class BWTDrawer extends Drawer{
                             InkWell(
                               onTap: ()=>Navigator.push(context,scaleIn(Subscription())),
                               child: ListTile(
+                                dense: true,
                                 leading: Icon(FontAwesomeIcons.sackDollar),
                                 title: Text("Subscription", style: TextStyle(color: Colors.black87, fontSize: 14)),
-                                subtitle: Text("Your subscription & other plans"),
+                                subtitle: Text("Your subscription & Payment History"),
                               ),
                             ),
                             InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(PaymentHistory())),
+                              onTap: ()=>Navigator.push(context,scaleIn(Settings())),
                               child: ListTile(
-                                leading: Icon(FontAwesomeIcons.piggyBank),
-                                title: Text("Payment History", style: TextStyle(color: Colors.black87, fontSize: 14)),
-                                subtitle: Text("see all your invoices"),
-                              ),
-                            ),
-                            Divider(
-                              thickness: 1,
-                              color: CONFIG.secondaryColor,
-                            ),
-                            InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(PaymentHistory())),
-                              child: ListTile(
-                                leading: Icon(FontAwesomeIcons.piggyBank),
+                                dense: true,
+                                leading: Icon(FontAwesomeIcons.sliders),
                                 title: Text("Settings", style: TextStyle(color: Colors.black87, fontSize: 14)),
-                                subtitle: Text("see all your invoices"),
+                                subtitle: Text("Finetune your expereince"),
                               ),
                             ),
                             InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(PaymentHistory())),
+                              onTap: ()=>Navigator.push(context,scaleIn(Support())),
                               child: ListTile(
-                                leading: Icon(FontAwesomeIcons.piggyBank),
+                                dense: true,
+                                leading: Icon(FontAwesomeIcons.circleQuestion),
                                 title: Text("Support", style: TextStyle(color: Colors.black87, fontSize: 14)),
-                                subtitle: Text("see all your invoices"),
+                                subtitle: Text("Reachout and get help"),
                               ),
                             ),
                           ],
                         )
-                    ),
+                    )),
                   ],
                 )
           ),

@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/app_bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
 
-class Subscription extends StatefulWidget{
+class Support extends StatefulWidget{
 
   @override
-  SubscriptionState createState()=>SubscriptionState();
+  SupportState createState()=>SupportState();
 
 }
 
-class SubscriptionState extends State<Subscription>{
+class SupportState extends State<Support>{
   final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
 
   @override
