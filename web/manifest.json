@@ -8,25 +8,34 @@
     "description": "Marketing tool for Facebook.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "headers": [ {
+        "source" : "index.html",
+        "headers" : [ {
+            "key" : "Access-Control-Allow-Origin",
+            "value" : "*"
+        },{ "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"},
+            { "Access-Control-Allow-Methods": "POST, GET, PUT, OPTIONS, DELETE" },
+            { "Access-Control-Max-Age": 3600 } ]
+    } ],
     "icons": [
         {
-            "src": "icons/logo_low_black.png",
+            "src": "icons/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/logo_low_black.png",
+            "src": "icons/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "icons/logo_low_black.png",
+            "src": "icons/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "icons/logo_low_black.png",
+            "src": "icons/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"

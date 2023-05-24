@@ -7,7 +7,7 @@ class Splash extends StatelessWidget{
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      backgroundColor: CONFIG.primaryColor,
+      backgroundColor: CONFIG.bgColor,
       body: Center(
         child:Image.asset("assets/images/logo_high_white.png", width: MediaQuery.of(context).size.width/2,),
       ),

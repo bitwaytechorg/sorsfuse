@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sorsfuse/components/app_bar.dart';
+import 'package:sorsfuse/components/bottom-bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
 import 'package:sorsfuse/config/config.dart' as CONFIG;
 import 'package:sorsfuse/global/session.dart' as SESSION;
@@ -67,9 +68,10 @@ class FacebookConnectState extends State<FacebookConnect>{
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey,
-      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
       endDrawer: BWTDrawer(),
-      body: Container(
+      body: Stack(children: [
+        Container(
           child:Center(child:Container(
       width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -90,13 +92,19 @@ class FacebookConnectState extends State<FacebookConnect>{
               ],
             ),
         ))
-      )
+      ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: BottomWidget(),
+        )
+    ])
     );
   }
 
   Widget AdAccountList(){
     return Container(
         decoration: BoxDecoration(
+
             //borderRadius: BorderRadius.all(Radius.circular(5)),
            // border: Border.all(color: Colors.grey[200]!)
         ),
@@ -108,6 +116,7 @@ class FacebookConnectState extends State<FacebookConnect>{
           dataTableHeader(),
           //datatable
           records.length>0?Container(
+              color: Colors.white,
               child:dataList()
           ):Center(
             child: Container(
@@ -299,7 +308,7 @@ class FacebookConnectState extends State<FacebookConnect>{
   Future<void> getAccessToken() async {
     try {
       await FacebookAuth.instance.webAndDesktopInitialize(
-        appId: CONFIG.facebook_app_id,
+        appId: "247745554393324",//CONFIG.facebook_app_id,
         cookie: true,
         xfbml: true,
         version: "v16.0",
@@ -311,6 +320,7 @@ class FacebookConnectState extends State<FacebookConnect>{
       if (result.status == LoginStatus.success) {
         final AccessToken accessToken = result.accessToken!;
         SESSION.fb_access_token = accessToken.token;
+        print(SESSION.fb_access_token);
         fetchAdAccounts();
       } else {
         print(result.status);
@@ -322,16 +332,18 @@ class FacebookConnectState extends State<FacebookConnect>{
     }
   }
   Future<void> fetchAdAccounts() async {
-    final String graphUrl = 'https://graph.facebook.com/v16.0/me?fields=id,name,adaccounts{business_name,name,business,account_id,account_status},businesses&access_token='+SESSION.fb_access_token;
+    final String graphUrl = 'https://graph.facebook.com/v16.0/me?fields=id,name,adaccounts{business_name,name,business,account_id,account_status}&access_token='+SESSION.fb_access_token;
     final http.Response response = await http.get(Uri.parse(graphUrl));
     final Map<String, dynamic> responseData = jsonDecode(response.body);
-
+    print(responseData);
+print("code---");
+    print(response.statusCode);
     if (response.statusCode == 200) {
      responseData["adaccounts"]["data"].forEach((element){
        SESSION.ad_accounts[element["account_id"]]=element;
      });
      print(SESSION.ad_accounts.length);
-     FirebaseFirestore.instance.collection("users").doc(SESSION.uid).update({"ad_accounts":jsonEncode(SESSION.ad_accounts)});
+     FirebaseFirestore.instance.collection("users").doc(SESSION.uid).update({"fb_access_token":SESSION.fb_access_token,"ad_accounts":jsonEncode(SESSION.ad_accounts)});
      setData();
     } else {
       // Handle error response

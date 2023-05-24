@@ -17,7 +17,7 @@ class PaymentHistoryState extends State<PaymentHistory>{
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey,
-      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
       endDrawer: BWTDrawer(),
     );
   }

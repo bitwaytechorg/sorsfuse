@@ -21,6 +21,7 @@ import 'package:sorsfuse/screens/privacy-policy.dart';
 import 'package:sorsfuse/screens/splash.dart';
 import 'package:sorsfuse/screens/update_profile.dart';
 import 'package:sorsfuse/theme/theme.dart';
+import 'components/bottom-bar.dart';
 import 'config/firebase_remote_config.dart';
 import 'package:sorsfuse/global/session.dart' as SESSION;
 import 'package:sorsfuse/global/global.dart' as GLOBAL;
@@ -31,30 +32,12 @@ final emailLinkProviderConfig=EmailLinkAuthProvider(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
-  FirebaseUIAuth.configureProviders([
-    EmailAuthProvider(),
-    //PhoneAuthProvider(),
-    //GoogleProvider(clientId: ),
-  ]);
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(MaterialApp(
-    title: "SorsFuse",
+    title: "Sniperr Leads",
      theme: lightTheme,
     // darkTheme: darkTheme,
-    routes:  <String, WidgetBuilder>{
-      '/privacy-policy': (BuildContext context) => PrivacyPolicy(),
-    },
-    home: FutureBuilder<FirebaseRemoteConfig>(
-      future: setupRemoteConfig(),
-      builder: (BuildContext context,
-          AsyncSnapshot<FirebaseRemoteConfig> snapshot) {
-        return snapshot.hasData
-            ? AuthGate(remoteConfig: snapshot.requireData)
-            : Splash();
-      },
-    ),
+    home: AuthGate(),
     debugShowCheckedModeBanner: false,
     locale: const Locale('en', 'US'),
     supportedLocales: const [Locale('en', 'US'),Locale('en', 'IN'),Locale('en', 'GB')],
@@ -75,12 +58,14 @@ class LabelOverrides extends DefaultLocalizations{
 
 }
 class AuthGate extends StatelessWidget {
-  AuthGate({
+  /*AuthGate({
     required this.remoteConfig,
   });
+   */
 
-  final FirebaseRemoteConfig remoteConfig;
+  //final FirebaseRemoteConfig remoteConfig;
   Map<String, dynamic> userData = {};
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
 
   @override
   Widget build(BuildContext context) {
@@ -95,125 +80,136 @@ class AuthGate extends StatelessWidget {
       },
     );
     return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        // if user is already signed-in use it as initial data
-
-        initialData: FirebaseAuth.instance.currentUser,
+      body: FutureBuilder(
+        future: _initialization,
         builder: (context, snapshot) {
-          // waiting for data
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Splash();
-          } else {
-            // user not signed in
-            if (snapshot.data == null) {
-              return SignInScreen(
-                actions: [
-                  ForgotPasswordAction((context, email) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ForgetPassword(email: email)));
-                  }),
-                  VerifyPhoneAction((context, _) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => PhoneLogin()));
-                  }),
-                  AuthStateChangeAction<SignedIn>((context, state) async {
-                    //set session
-                    print("login done");
+      if (snapshot.connectionState == ConnectionState.done) {
+        setupRemoteConfig();
+        FirebaseUIAuth.configureProviders([
+          EmailAuthProvider(),
+          //PhoneAuthProvider(),
+          //GoogleProvider(clientId: "3223412873342"),
+        ]);
+        return StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          // if user is already signed-in use it as initial data
 
-                    if (!state.user!.emailVerified) {
-                      Navigator.pushReplacement(
+          initialData: FirebaseAuth.instance.currentUser,
+          builder: (context, snapshot) {
+            // waiting for data
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Splash();
+            } else {
+              // user not signed in
+              if (snapshot.data == null) {
+                return SignInScreen(
+                  oauthButtonVariant: OAuthButtonVariant.icon,
+                  actions: [
+                    ForgotPasswordAction((context, email) {
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => VerifyEmail()));
-                    } else {
-                      await setSession(state.user!.uid);
+                              builder: (context) =>
+                                  ForgetPassword(email: email)));
+                    }),
+                    VerifyPhoneAction((context, _) {
                       Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Dashboard()));
-                    }
-                  }),
-                  AuthStateChangeAction<UserCreated>((context, state) {
-                    String email = state.credential.user!.email.toString();
-                    FirebaseFirestore.instance
-                        .collection(GLOBAL.userCollection)
-                        .doc(state.credential.user!.uid)
-                        .set({
-                      "uid": state.credential.user!.uid,
-                      "email":state.credential.user!.email,
-                      "displayName":email.substring(0,email.indexOf("@")),
-                      "subscription_ends_at":DateTime.now().toUtc(),
-                      "audience_limit":3
-                    });
-                    if (!state.credential.user!.emailVerified) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VerifyEmail()));
-                    } else {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => (FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser?.displayName==null)?UpdateProfile():Dashboard()));
-                    }
-                  }),
-                  mfaAction,
-                ],
-                styles: const {
-                  EmailFormStyle(signInButtonVariant: ButtonVariant.filled),
-                },
-                headerBuilder: headerBuilder(),
-                sideBuilder: sideBuilder(),
-                subtitleBuilder: (context, action) {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      action == AuthAction.signIn
-                          ? 'Welcome to ${GLOBAL.APP_TITLE}! Please sign in to continue.'
-                          : 'Welcome to ${GLOBAL.APP_TITLE}! please create a account to continue',
-                    ),
-                  );
-                },
-                footerBuilder: (context, action) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16),
+                          MaterialPageRoute(builder: (context) => PhoneLogin()));
+                    }),
+                    AuthStateChangeAction<SignedIn>((context, state) async {
+                      //set session
+                      print("login done");
+
+                      if (!state.user!.emailVerified) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VerifyEmail()));
+                      } else {
+                        await setSession(state.user!.uid);
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => Dashboard()));
+                      }
+                    }),
+                    AuthStateChangeAction<UserCreated>((context, state) {
+                      String email = state.credential.user!.email.toString();
+                      FirebaseFirestore.instance
+                          .collection(GLOBAL.userCollection)
+                          .doc(state.credential.user!.uid)
+                          .set({
+                        "uid": state.credential.user!.uid,
+                        "email":state.credential.user!.email,
+                        "displayName":email.substring(0,email.indexOf("@")),
+                        "subscription_ends_at":DateTime.now().toUtc(),
+                        "audience_limit":3
+                      });
+                      if (!state.credential.user!.emailVerified) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VerifyEmail()));
+                      } else {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => (FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser?.displayName==null)?UpdateProfile():Dashboard()));
+                      }
+                    }),
+                    mfaAction,
+                  ],
+                  styles: const {
+                    EmailFormStyle(signInButtonVariant: ButtonVariant.filled),
+                  },
+                  headerBuilder: headerBuilder(),
+                  sideBuilder: sideBuilder(),
+                  subtitleBuilder: (context, action) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 8),
                       child: Text(
                         action == AuthAction.signIn
-                            ? 'Welcome to ${GLOBAL.APP_TITLE}! please sign in to continue.'
-                            : 'Welcome to ${GLOBAL.APP_TITLE} ! please create an account to continue',
-                        style: const TextStyle(color: Colors.grey),
+                            ? 'Welcome to ${GLOBAL.APP_TITLE}! Please sign in to continue.'
+                            : 'Welcome to ${GLOBAL.APP_TITLE}! please create a account to continue',
                       ),
-                    ),
-                  );
-                },
-              );
-            } else {
-              //Render Your applicatiom if authenticated
-              //and local session
-              return FutureBuilder<bool>(
-                future: setSession(
-                    FirebaseAuth.instance.currentUser!.uid), // async work
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Splash();
-                    default:
-                      if (snapshot.hasError) {
-                        print("ERROR");
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if(FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser!.displayName==null){
-                        return UpdateProfile();
-                      } else {
-                        return Dashboard();
-                      }
-                  }
-                },
-              );
+                    );
+                  },
+                  footerBuilder: (context, action) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        // child:BottomWidget(),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                //Render Your applicatiom if authenticated
+                //and local session
+                return FutureBuilder<bool>(
+                  future: setSession(
+                      FirebaseAuth.instance.currentUser!.uid), // async work
+                  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Splash();
+                      default:
+                        if (snapshot.hasError) {
+                          print("ERROR");
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if(FirebaseAuth.instance.currentUser!.displayName=="" || FirebaseAuth.instance.currentUser!.displayName==null){
+                          return UpdateProfile();
+                        } else {
+                          return Dashboard();
+                        }
+                    }
+                  },
+                );
+              }
             }
-          }
-        },
-      ),
+          },
+        );
+      } else {
+        return Splash();
+      }
+    },
+    )
     );
   }
 
@@ -236,6 +232,7 @@ class AuthGate extends StatelessWidget {
     SESSION.source_limit = userData["source_limit"] ?? 5;
     SESSION.subscription = userData['subscription']??"trail";
     SESSION.subscription_ends_at = userData["subscription_ends_at"].toDate();
+    SESSION.fb_access_token = userData["fb_access_token"]??"";
     SESSION.ad_accounts = userData['ad_accounts']!=null && userData['ad_accounts']!=""?jsonDecode(userData['ad_accounts']):{};
 
     return true;

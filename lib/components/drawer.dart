@@ -56,12 +56,14 @@ class BWTDrawer extends Drawer{
                       margin: EdgeInsets.only(bottom: 10),
                       child: Text(SESSION.displayName, style: TextStyle(fontSize: 16),),
                     ),
-                    InkWell(
-                      onTap: ()=>Navigator.push(context, scaleIn(UpdateProfile())),
+                    MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child:InkWell(
+                      onTap: ()=>Navigator.pushReplacement(context, scaleIn(UpdateProfile())),
                       child: Container(
                         child:Text("Profile", style: TextStyle(color:CONFIG.primaryColor, fontSize: 12),),
                       ),
-                    ),
+                    )),
                     //menu
                     Divider(
                       thickness: 20,
@@ -75,18 +77,20 @@ class BWTDrawer extends Drawer{
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            InkWell(
-                                onTap: ()=>Navigator.push(context,scaleIn(Dashboard())),
-                                child: ListTile(
+                             InkWell(
+                                onTap: ()=>Navigator.pushReplacement(context,scaleIn(Dashboard())),
+                                child:  MouseRegion(
+                                    cursor: SystemMouseCursors.grab,
+                                    child:ListTile(
                                   dense: true,
                                   leading: Icon(Icons.dashboard),
                                   title: Text("Dashboard", style: TextStyle(color: Colors.black87, fontSize: 14)),
                                   subtitle: Text("Summary & Stats"),
                                 )
-                            ),
+                            )),
 
                             InkWell(
-                              onTap: ()=>Navigator.push(context, scaleIn(AudienceList())),
+                              onTap: ()=>Navigator.pushReplacement(context, scaleIn(AudienceList())),
                               child: Container(
                                   child:ListTile(
                                     dense: true,
@@ -97,7 +101,7 @@ class BWTDrawer extends Drawer{
                               ),
                             ),
                             InkWell(
-                              onTap: ()=>Navigator.push(context, scaleIn(FacebookConnect())),
+                              onTap: ()=>Navigator.pushReplacement(context, scaleIn(FacebookConnect())),
                               child: ListTile(
                                 dense: true,
                                 leading: Icon(FontAwesomeIcons.facebook),
@@ -112,7 +116,7 @@ class BWTDrawer extends Drawer{
                             ),
 
                             InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(Subscription())),
+                              onTap: ()=>Navigator.pushReplacement(context,scaleIn(Subscription())),
                               child: ListTile(
                                 dense: true,
                                 leading: Icon(FontAwesomeIcons.sackDollar),
@@ -121,7 +125,7 @@ class BWTDrawer extends Drawer{
                               ),
                             ),
                             InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(Settings())),
+                              onTap: ()=>Navigator.pushReplacement(context,scaleIn(Settings())),
                               child: ListTile(
                                 dense: true,
                                 leading: Icon(FontAwesomeIcons.sliders),
@@ -130,7 +134,7 @@ class BWTDrawer extends Drawer{
                               ),
                             ),
                             InkWell(
-                              onTap: ()=>Navigator.push(context,scaleIn(Support())),
+                              onTap: ()=>Navigator.pushReplacement(context,scaleIn(Support())),
                               child: ListTile(
                                 dense: true,
                                 leading: Icon(FontAwesomeIcons.circleQuestion),

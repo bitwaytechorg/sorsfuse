@@ -2,13 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 class DefaultFirebaseConfig {
   static FirebaseOptions get platformOptions {
     return FirebaseOptions(
-        apiKey: "AIzaSyAfNHCoDzpznXw6N_VzBhEOFIs9Gf1pN14",
-        authDomain: "sorsfuse.firebaseapp.com",
-        projectId: "sorsfuse",
-        storageBucket: "sorsfuse.appspot.com",
-        messagingSenderId: "727589299914",
-        appId: "1:727589299914:web:99b1c88a2f637bca7bb633",
-        measurementId: "G-8HN59N7NSJ"
+        apiKey: "AIzaSyCrug2enM3MSeDswNDcwvlb4M9XvY_YDUA",
+        authDomain: "sniperr-leads.firebaseapp.com",
+        projectId: "sniperr-leads",
+        storageBucket: "sniperr-leads.appspot.com",
+        messagingSenderId: "503581516049",
+        appId: "1:503581516049:web:c6ee55be1b92499158ecb0",
+        measurementId: "G-VREG6BMKVJ"
     );
   }
   }

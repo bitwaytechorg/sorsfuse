@@ -284,7 +284,7 @@ class BWTDataTableState extends State<BWTDataTable>{
           Row(
             children: [
               Container(
-                child: SearchBar(width: 500, onSearch: onSearch, rtl: true,),
+               // child: SearchBar(width: 500, onSearch: onSearch, rtl: true,),
                 color: Colors.transparent,
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
               ),

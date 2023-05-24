@@ -38,18 +38,23 @@ class UpdateProfileState extends State<UpdateProfile>{
 
   String mode = "profile";
 
+  bool _obscureText = true;
+
 
 
   @override
   Widget build(BuildContext context) {
    return Scaffold(
      key: scaffoldkey,
-     appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+     appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
      endDrawer: BWTDrawer(),
-     body: SingleChildScrollView(
+     body: Stack(children: [
+       SingleChildScrollView(
          child:Center(child:Container(
+           color: Colors.white,
          width: MediaQuery.of(context).size.width<600?MediaQuery.of(context).size.width:800,
        padding: EdgeInsets.symmetric(vertical: 20),
+             margin: EdgeInsets.symmetric(vertical: 20),
        child:Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +110,8 @@ class UpdateProfileState extends State<UpdateProfile>{
               ],
             )
      ))
-   ));
+   ),
+    ]));
   }
 
   Widget ProfileView(){
@@ -113,9 +119,6 @@ class UpdateProfileState extends State<UpdateProfile>{
         child: Column(
           children: [
             Container(
-              decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.grey))
-              ),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
               margin: EdgeInsets.symmetric(vertical: 25),
               child: Row(
@@ -140,6 +143,7 @@ class UpdateProfileState extends State<UpdateProfile>{
                 ],
               ),
             ),
+            Divider(height: 30, thickness: 10, color: Colors.grey[200],),
             //Form
             Form(
               key: formKey,
@@ -300,6 +304,16 @@ class UpdateProfileState extends State<UpdateProfile>{
                   controller: passwordCtrl,
                   decoration: InputDecoration(
                     labelText: "Current Password",
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                        child: Icon(
+                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      ),
                     errorText: _errorMsg
                   ),
                   validator: (value) =>
@@ -308,7 +322,7 @@ class UpdateProfileState extends State<UpdateProfile>{
                     passwordFormKey.currentState?.validate();
                     FocusScope.of(context).requestFocus(newPasswordFocusNode);
                   },
-                  obscureText: true,
+                  obscureText: _obscureText,
                   keyboardType: TextInputType.text,
                 )),
                 Container(
@@ -319,6 +333,16 @@ class UpdateProfileState extends State<UpdateProfile>{
                   controller: newPasswordCtrl,
                   decoration: InputDecoration(
                     labelText: "New Password",
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      child: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                    ),
                   ),
                   validator: (value) =>
                   value!.isEmpty ? "Password can't be blank" : null,
@@ -326,7 +350,7 @@ class UpdateProfileState extends State<UpdateProfile>{
                     passwordFormKey.currentState?.validate();
                     FocusScope.of(context).requestFocus(confirmPassowrdFocusNode);
                   },
-                  obscureText: true,
+                  obscureText: _obscureText,
                   keyboardType: TextInputType.text,
                 )),
                 Container(
@@ -337,6 +361,16 @@ class UpdateProfileState extends State<UpdateProfile>{
                   controller: confirmPasswordCtrl,
                   decoration: InputDecoration(
                     labelText: "Confirm Password",
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      child: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                    ),
                   ),
                   validator: (value) {
                     return value!.isEmpty || value != newPasswordCtrl.text? "Please Confirm Password" : null;
@@ -344,7 +378,7 @@ class UpdateProfileState extends State<UpdateProfile>{
                   onFieldSubmitted: (v) {
                     passwordFormKey.currentState?.validate();
                   },
-                  obscureText: true,
+                  obscureText: _obscureText,
                   keyboardType: TextInputType.text,
                 )),
                 Container(

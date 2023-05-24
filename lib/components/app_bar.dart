@@ -1,15 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sorsfuse/components/avatar.dart';
+import 'package:sorsfuse/components/route_builder.dart';
 import 'package:sorsfuse/config/config.dart' as CONFIG;
 import 'package:sorsfuse/global/global.dart' as GLOBAL;
 import 'package:sorsfuse/global/session.dart' as SESSION;
+import 'package:sorsfuse/screens/dashboard.dart';
 
 class BWTAppBar extends AppBar{
   final GlobalKey<ScaffoldState> scaffoldKey;
-  BWTAppBar({required this.scaffoldKey}):super(
-    title: Text(GLOBAL.APP_TITLE),
-    leading: AspectRatio(aspectRatio: 1, child:Image.asset("assets/images/logo_low_white.png", height: 50,)),
+  final BuildContext context;
+  BWTAppBar({required this.scaffoldKey, required this.context}):super(
+    title: InkWell(
+      onTap: ()=>Navigator.pushReplacement(context, scaleIn(Dashboard())),
+        child:Image.asset("assets/images/logo_sm_white.png", height:50,)),
     centerTitle: false,
     foregroundColor: Colors.white,
     backgroundColor:CONFIG.primaryColor,

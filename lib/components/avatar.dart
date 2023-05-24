@@ -32,7 +32,7 @@ class AvatarState extends State<Avatar> {
           borderRadius: BorderRadius.circular(widget.size/2),
           //boxShadow: [BoxShadow(color:Colors.white,blurRadius: 2,spreadRadius: 4)]
         ),
-        child: ClipOval(child:widget.ImageURL!=''?Image.network(widget.ImageURL, fit: BoxFit.cover,):widget.isFile?Image.file(io.File(widget.ImageFile!.path,),fit: BoxFit.cover,):SvgPicture.asset("assets/svg/default_avatar.svg", color: CONFIG.secondaryColor, width: widget.size,height: widget.size,),)
+        child: ClipOval(child:widget.ImageURL!=''?Image.network(widget.ImageURL, fit: BoxFit.cover,):widget.isFile?Image.file(io.File(widget.ImageFile!.path,),fit: BoxFit.cover,):SvgPicture.asset("assets/svg/default_avatar.svg", fit:BoxFit.cover,color: CONFIG.secondaryColor, width: widget.size,height: widget.size,),)
     );
   }
 }

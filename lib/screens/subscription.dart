@@ -17,7 +17,7 @@ class SubscriptionState extends State<Subscription>{
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey,
-      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
       endDrawer: BWTDrawer(),
     );
   }

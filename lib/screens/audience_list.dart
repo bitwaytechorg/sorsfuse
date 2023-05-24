@@ -4,12 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sorsfuse/components/app_bar.dart';
+import 'package:sorsfuse/components/bottom-bar.dart';
 import 'package:sorsfuse/components/drawer.dart';
 import 'package:sorsfuse/config/config.dart' as CONFIG;
 import 'package:sorsfuse/global/session.dart' as SESSION;
 import 'package:sorsfuse/global/global.dart' as GLOBAL;
 import 'package:sorsfuse/models/audience.dart';
 import 'package:sorsfuse/repositories/audienceRepository.dart';
+import 'package:sorsfuse/screens/audience.dart';
+
+import '../components/route_builder.dart';
 
 
 class AudienceList extends StatefulWidget{
@@ -22,7 +26,6 @@ class AudienceList extends StatefulWidget{
 class AudienceListState extends State<AudienceList>{
   final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
   final audienceNameCtrl = TextEditingController();
-  final sourceTypeCtrl = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final audienceNameFocusNode = FocusNode();
   List<Audience> audience_list =[];
@@ -44,19 +47,6 @@ class AudienceListState extends State<AudienceList>{
     
   }
 
-  void getData() async{
-    var _response = await FirebaseFirestore.instance.collection(GLOBAL.audienceCollection).where("created_by", isEqualTo: SESSION.uid).get();
-    var _raw = _response.docs;
-    List<Audience> _data = [];
-    _raw.forEach((element) {
-      _data.add(Audience.fromMap(element.data()));
-    });
-    setState(() {
-      audience_list = _data;
-      dataLoaded = true;
-    });
-  }
-
   void prepareData(List<Audience> rec){
     //set variables to fetch data
     int startFrom = (current_page - 1)*records_per_page;
@@ -75,9 +65,10 @@ class AudienceListState extends State<AudienceList>{
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey,
-      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
       endDrawer: BWTDrawer(),
-      body: Container(
+      body: Stack(children: [
+        Container(
           child:Center(child:Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -99,6 +90,11 @@ class AudienceListState extends State<AudienceList>{
             ),
           ))
       ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: BottomWidget(),
+        )
+    ])
     );
   }
 
@@ -153,16 +149,20 @@ class AudienceListState extends State<AudienceList>{
 
                   IconData statusIcon = FontAwesomeIcons.clock;
                   Color statusColor = Colors.black87;
-                  if (audience_list[index].status == "Analysing") {
+                  if (audience_list[index].status == "analysing") {
                     statusIcon = FontAwesomeIcons.gears;
                     statusColor = Colors.orange;
-                  } else if (audience_list[index].status == "Completed") {
+                  } else if (audience_list[index].status == "completed") {
                     statusIcon = FontAwesomeIcons.check;
                     statusColor = Colors.green;
                   }
-                  return Container(
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                      onTap: ()=>Navigator.pushReplacement(context, scaleIn(AudienceScreen(audience_id: audience_list[index].audience_id))),
+                      child:Container(
                     height: 80,
                     decoration: BoxDecoration(
+                        color: Colors.white,
                         border: Border.all(color: Colors.grey[300]!)
                     ),
                     margin: EdgeInsets.symmetric(vertical: 7),
@@ -199,7 +199,7 @@ class AudienceListState extends State<AudienceList>{
                                     Icon(statusIcon, color: statusColor, size: 10,),
                                     Container(
                                       margin: EdgeInsets.symmetric(horizontal: 5),
-                                      child: Text(audience_list[index].status,
+                                      child: Text(audience_list[index].status.capitalize(),
                                         style: TextStyle(
                                             fontSize: 12, color: statusColor),),
                                     )
@@ -239,7 +239,7 @@ class AudienceListState extends State<AudienceList>{
                         )
                       ],
                     ),
-                  );
+                  ));
                 }, shrinkWrap: true, itemCount: audience_list.length,)
               ],
             )
@@ -397,13 +397,14 @@ void showAddAudienceDialog(){
                     ElevatedButton(
                       child: Text("Create Audience"),
                       onPressed:  () async {
-                        Audience data = Audience(name: audienceNameCtrl.text,source_type: source_type);
-                        audience_list.add(data);
-                        _audienceRepository.save(data);
-                        Navigator.of(context).pop();
-                        setState((){
-                          audience_list=audience_list;
-                        });
+                          if (formKey.currentState!.validate()) {
+                            Audience data = Audience(
+                                name: audienceNameCtrl.text, source_type: source_type);
+                            audience_list.add(data);
+                            audienceNameCtrl.text="";
+                            _audienceRepository.save(data);
+                            Navigator.of(context).pop();
+                          }
                       },
                     ),
                     TextButton(
@@ -451,7 +452,9 @@ void showAddAudienceDialog(){
                           Divider(height: 30, color: Colors.grey[200]!,),
                           //source type
                           Container(
-                            child: Column(
+                            height: MediaQuery.of(context).size.height>720?420:MediaQuery.of(context).size.height-300,
+                            child: SingleChildScrollView(
+                                child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
@@ -462,7 +465,6 @@ void showAddAudienceDialog(){
                                     onTap: (){setState((){
                                       source_type = "facebook";
                                     });
-                                    sourceTypeCtrl.text="facebook";
                                     },
                                     child:Container(
                                       decoration: BoxDecoration(
@@ -480,7 +482,6 @@ void showAddAudienceDialog(){
                                     onTap: (){setState((){
                                       source_type = "instagram";
                                     });
-                                    sourceTypeCtrl.text="instagram";
                                       },
                                     child:Container(
                                       decoration: BoxDecoration(
@@ -498,7 +499,6 @@ void showAddAudienceDialog(){
                                     onTap: (){setState((){
                                       source_type = "linkedin";
                                     });
-                                    sourceTypeCtrl.text="linkedin";
                                     },
                                     child:Container(
                                       decoration: BoxDecoration(
@@ -516,7 +516,6 @@ void showAddAudienceDialog(){
                                     onTap: (){setState((){
                                       source_type = "custom";
                                     });
-                                    sourceTypeCtrl.text="custom";
                                     },
                                     child:Container(
                                       decoration: BoxDecoration(
@@ -531,7 +530,7 @@ void showAddAudienceDialog(){
                                       ),
                                     ))
                               ],
-                            ),
+                            )),
                           ),
                         ],
                       ))

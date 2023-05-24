@@ -5,7 +5,6 @@ import 'package:sorsfuse/config/config.dart' as CONFIG;
 ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColor: CONFIG.primaryColor,
     secondaryHeaderColor: Color(0xFF7a97d1),
-    accentColor: Color(0xFF1990D0),
     brightness: Brightness.dark,
     canvasColor: Color(0xFF000000),
     backgroundColor: Colors.transparent,
@@ -80,20 +79,18 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
     ),
     appBarTheme: AppBarTheme(
         backgroundColor: Color(0XFFFF0087),
-        textTheme: TextTheme(
-            subtitle1: TextStyle(
+        titleTextStyle: TextStyle(
               color: Colors.white,
               fontSize: 16,
-            )),
+            ),
         elevation: 0.0,
         iconTheme: IconThemeData(color: Colors.white54, size: 18.0),
         actionsIconTheme: IconThemeData(color: Colors.white54, size: 8.0)));
 
 ThemeData lightTheme = ThemeData.light().copyWith(
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: Colors.grey[200],
     primaryColor: CONFIG.primaryColor,
-    accentColor: CONFIG.secondaryColor,
-    canvasColor: Color(0xFFFFFFFF),
+    canvasColor: Color(0xFFEFEFEF),
     primaryColorLight: CONFIG.secondaryColor,
     primaryColorDark: CONFIG.primaryColor,
     splashColor: Colors.transparent,
@@ -158,13 +155,13 @@ ThemeData lightTheme = ThemeData.light().copyWith(
     //bottomAppBarTheme: BottomAppBarTheme(color: Colors.transparent, elevation: 0.0),
     //bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: Colors.transparent, type: BottomNavigationBarType.shifting, elevation:0.0),
     colorScheme: ColorScheme(
-      background: Color(0xFFFFFFFF),
+      background: Color(0xFFEFEFEF),
       primary: CONFIG.primaryColor,
       primaryVariant: Color(0xFF71B5D9),
       secondary: CONFIG.secondaryColor,
       secondaryVariant: CONFIG.secondaryColor,
       error: Colors.red,
-      surface: Color(0xFFFFFFFF),
+      surface: Color(0xFFEFEFEF),
       brightness: Brightness.light,
       onBackground: Colors.black54,
       onError: Color(0xFFFFFFFF),

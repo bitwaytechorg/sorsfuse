@@ -6,7 +6,8 @@ import 'package:sorsfuse/config/config.dart' as CONFIG;
 SideBuilder sideBuilder(){
   return (context, constraints){
     return Container(
-      color: CONFIG.primaryColor,
+      color: CONFIG.bgColor,
+      height: MediaQuery.of(context).size.height,
       padding: EdgeInsets.all(90),
       child: AspectRatio(
         aspectRatio: 1,
@@ -20,7 +21,7 @@ SideBuilder sideBuilder(){
 HeaderBuilder headerBuilder(){
   return (context, constraints, _){
     return Container(
-      color: CONFIG.primaryColor,
+      color: CONFIG.bgColor,
       padding: EdgeInsets.all(20),
       child:  AspectRatio(
         aspectRatio: 1,

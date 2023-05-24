@@ -15,3 +15,9 @@ final actionCodeSettings = ActionCodeSettings(
   // androidPackageName: 'io.flutter.plugins.firebase_ui.firebase_ui_example',
   // iOSBundleId: 'io.flutter.plugins.fireabaseUiExample',
 );
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
+}

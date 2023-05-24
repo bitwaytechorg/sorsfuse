@@ -17,7 +17,7 @@ class BlankState extends State<Blank>{
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldkey,
-      appBar: BWTAppBar(scaffoldKey: scaffoldkey,),
+      appBar: BWTAppBar(scaffoldKey: scaffoldkey,context: context,),
       endDrawer: BWTDrawer(),
         body: SingleChildScrollView(
             child:Center(child:Container(
